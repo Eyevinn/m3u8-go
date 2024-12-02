@@ -556,6 +556,12 @@ func decodeLineOfMediaPlaylist(p *MediaPlaylist, wv *WV, state *decodingState, l
 				return err
 			}
 		}
+		if len(state.dateRanges) > 0 {
+			if err = p.AppendDateRanges(state.dateRanges); strict && err != nil {
+				return err
+			}
+			state.dateRanges = nil
+		}
 		// If EXT-X-KEY appeared before reference to segment (EXTINF) then it linked to this segment
 		if state.tagKey {
 			p.Segments[p.last()].Key = &Key{state.xkey.Method, state.xkey.URI, state.xkey.IV, state.xkey.Keyformat, state.xkey.Keyformatversions}
@@ -583,6 +589,7 @@ func decodeLineOfMediaPlaylist(p *MediaPlaylist, wv *WV, state *decodingState, l
 			state.custom = make(map[string]CustomTag)
 			state.tagCustom = false
 		}
+		
 	// start tag first
 	case line == "#EXTM3U":
 		state.m3u = true
@@ -846,6 +853,42 @@ func decodeLineOfMediaPlaylist(p *MediaPlaylist, wv *WV, state *decodingState, l
 		if err == nil {
 			state.tagWV = true
 		}
+	case strings.HasPrefix(line, "#EXT-X-DATERANGE"):
+		dateRange := new(DateRange)
+		for attribute, value := range decodeParamsLine(line[17:]) {
+			switch attribute {
+			case "ID":
+				dateRange.ID = value
+			case "START-DATE":
+				if dateRange.StartDate, err = TimeParse(value); strict && err != nil {
+					return err
+				}
+			case "END-DATE":
+				if dateRange.EndDate, err = TimeParse(value); strict && err != nil {
+					return err
+				}
+			case "SCTE35-CMD":
+				dateRange.SCTE35Command = value
+			case "SCTE35-OUT":
+				dateRange.SCTE35Out = value
+			case "SCTE35-IN":
+				dateRange.SCTE35In = value
+			case "DURATION":
+				dateRange.Duration, _ = strconv.ParseFloat(value, 64)
+			case "PLANNED-DURATION":
+				dateRange.PlannedDuration, _ = strconv.ParseFloat(value, 64)
+			case "END-ON-NEXT":
+				dateRange.EndOnNext = value
+			default:
+				if strings.HasPrefix(attribute, "X-") {
+					if dateRange.ClientAttributes == nil {
+						dateRange.ClientAttributes = make(ClientAttributes, 1)
+					}
+					dateRange.ClientAttributes[attribute] = value
+				}
+			}
+		}
+		state.dateRanges = append(state.dateRanges, *dateRange)
 	case strings.HasPrefix(line, "#"):
 		// comments are ignored
 	}

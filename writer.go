@@ -664,6 +664,69 @@ func (p *MediaPlaylist) Encode() *bytes.Buffer {
 			p.buf.WriteString(seg.ProgramDateTime.Format(DATETIME))
 			p.buf.WriteRune('\n')
 		}
+		if len(seg.DateRanges) > 0 {
+			for _, dr := range seg.DateRanges {
+				p.buf.WriteString("#EXT-X-DATERANGE:")
+				p.buf.WriteString("ID=\"")
+				p.buf.WriteString(dr.ID)
+				p.buf.WriteString("\",START-DATE=\"")
+				p.buf.WriteString(dr.StartDate.Format(DATERANGE_DATETIME))
+				p.buf.WriteString("\"")
+
+				if dr.Class != "" {
+					p.buf.WriteString(",CLASS=\"")
+					p.buf.WriteString(dr.Class)
+					p.buf.WriteString("\"")
+				}
+
+				if dr.Duration != 0 {
+					p.buf.WriteString(",DURATION=")
+					p.buf.WriteString(strconv.FormatFloat(dr.Duration, 'f', 3, 32))
+				}
+
+				if dr.PlannedDuration != 0 {
+					p.buf.WriteString(",PLANNED-DURATION=")
+					p.buf.WriteString(strconv.FormatFloat(dr.PlannedDuration, 'f', 3, 32))
+				}
+
+				if !dr.EndDate.IsZero() {
+					p.buf.WriteString(",END-DATE=\"")
+					p.buf.WriteString(dr.EndDate.Format(DATERANGE_DATETIME))
+					p.buf.WriteString("\"")
+				}
+
+				if dr.SCTE35Command != "" {
+					p.buf.WriteString(",SCTE35-CMD=")
+					p.buf.WriteString(dr.SCTE35Command)
+				}
+
+				if dr.SCTE35Out != "" {
+					p.buf.WriteString(",SCTE35-OUT=")
+					p.buf.WriteString(dr.SCTE35Command)
+					p.buf.WriteString("\"")
+				}
+
+				if dr.SCTE35In != "" {
+					p.buf.WriteString(",SCTE35-IN=")
+					p.buf.WriteString(dr.SCTE35Command)
+				}
+
+				if dr.EndOnNext != "" {
+					p.buf.WriteString(",END-ON-NEXT=")
+					p.buf.WriteString(dr.EndOnNext)
+				}
+
+				for k, v := range dr.ClientAttributes {
+					p.buf.WriteString(",")
+					p.buf.WriteString(k)
+					p.buf.WriteString("=\"")
+					p.buf.WriteString(v)
+					p.buf.WriteString("\"")
+				}
+
+				p.buf.WriteRune('\n')
+			}
+		}
 		if seg.Limit > 0 {
 			p.buf.WriteString("#EXT-X-BYTERANGE:")
 			p.buf.WriteString(strconv.FormatInt(seg.Limit, 10))
@@ -906,6 +969,16 @@ func (p *MediaPlaylist) SetWinSize(winsize uint) error {
 	p.winsize = winsize
 	return nil
 }
+
+func (p *MediaPlaylist) AppendDateRanges(dateRanges []DateRange) error {
+	if p.count == 0 {
+		return errors.New("playlist is empty")
+	}
+	s := p.Segments[p.last()]
+	s.DateRanges = append(s.DateRanges, dateRanges...)
+	return nil
+}
+
 
 // GetAllSegments could get all segments currently added to
 // playlist.

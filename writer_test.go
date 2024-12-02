@@ -1123,6 +1123,101 @@ func ExampleMediaPlaylistGetAllSegments() {
 	// t04.ts
 }
 
+func TestNewMasterPlaylistSetDateRange(t *testing.T) {
+	segments := []*MediaSegment{{URI: "test.ts", Duration: 5.0}}
+	now := time.Now()
+
+	tests := []struct {
+		Name            string
+		DateRanges       []DateRange
+		ExpectedResults []string
+		ExpectedError   string
+		Segments        []*MediaSegment
+	}{
+		{
+			Name:          "Set date range to empty playlist",
+			ExpectedError: "playlist is empty",
+		},
+		{
+			Name: "Set date range with all params",
+			DateRanges: []DateRange{
+				{
+					ID:               "id1",
+					StartDate:        now,
+					Duration:         10,
+					PlannedDuration:  5,
+					Class:            "class",
+					EndDate:          now,
+					ClientAttributes: ClientAttributes{"X-COM-EXAMPLE-AD-ID": "XYZ123"},
+					SCTE35In:         "test",
+					SCTE35Out:        "test",
+					SCTE35Command:    "test",
+					EndOnNext:        "YES",
+				},
+				{
+					ID:               "id2",
+					StartDate:        now,
+					Duration:         10,
+					PlannedDuration:  5,
+					Class:            "class",
+					EndDate:          now,
+					ClientAttributes: ClientAttributes{"X-COM-EXAMPLE-AD-ID": "XYZ123"},
+					SCTE35In:         "test",
+					SCTE35Out:        "test",
+					SCTE35Command:    "test",
+					EndOnNext:        "YES",
+				},
+			},
+			Segments: segments,
+			ExpectedResults: []string{
+				`#EXT-X-DATERANGE`,
+				`ID="id1"`,
+				`ID="id2"`,
+				fmt.Sprintf(`START-DATE="%s"`, now.Format(DATERANGE_DATETIME)),
+				fmt.Sprintf(`END-DATE="%s"`, now.Format(DATERANGE_DATETIME)),
+				`X-COM-EXAMPLE-AD-ID="XYZ123"`,
+				`SCTE35-IN=test`,
+				`SCTE35-OUT=test`,
+				`SCTE35-CMD=test`,
+				`CLASS="class"`,
+				`DURATION=10.000`,
+				`PLANNED-DURATION=5.000`,
+				`END-ON-NEXT=YES`,
+			},
+		},
+	}
+
+	for _, test := range tests {
+		p, e := NewMediaPlaylist(1, 1)
+		if e != nil {
+			t.Fatalf("Create media playlist failed: %s", e)
+		}
+
+		for _, s := range test.Segments {
+			if e = p.AppendSegment(s); e != nil {
+				t.Errorf("Add 1st segment to a media playlist failed: %s", e)
+			}
+		}
+
+		if e := p.AppendDateRanges(test.DateRanges); e != nil {
+			if test.ExpectedError != "" {
+				if !strings.Contains(e.Error(), test.ExpectedError) {
+					t.Errorf("Test '%s'  did not contain: %q, playlist: %v",
+						test.Name, test.ExpectedError, p.String())
+				}
+			} else {
+				t.Errorf("SetDateRange to a media playlist failed: %s", e)
+			}
+		}
+
+		actualResult := p.String()
+		for _, expected := range test.ExpectedResults {
+			if !strings.Contains(actualResult, expected) {
+				t.Errorf("Test '%s' did not contain: %q, playlist: %v", test.Name, expected, actualResult)
+			}
+		}
+	}
+}
 /****************
  *  Benchmarks  *
  ****************/

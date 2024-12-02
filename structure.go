@@ -37,6 +37,7 @@ const (
 	// playlists. Format for EXT-X-PROGRAM-DATE-TIME defined in
 	// section 3.4.5
 	DATETIME = time.RFC3339Nano
+	DATERANGE_DATETIME = "2006-01-02T15:04:05Z07:00"
 )
 
 // ListType is type of the playlist.
@@ -109,6 +110,7 @@ type MediaPlaylist struct {
 	TargetDuration   float64
 	SeqNo            uint64 // EXT-X-MEDIA-SEQUENCE
 	Segments         []*MediaSegment
+	// DateRanges	     []*DateRange
 	Args             string // optional arguments placed after URIs (URI?Args)
 	Iframe           bool   // EXT-X-I-FRAMES-ONLY
 	Closed           bool   // is this VOD (closed) or Live (sliding) playlist?
@@ -214,7 +216,23 @@ type MediaSegment struct {
 	Discontinuity   bool      // EXT-X-DISCONTINUITY indicates an encoding discontinuity between the media segment that follows it and the one that preceded it (i.e. file format, number and type of tracks, encoding parameters, encoding sequence, timestamp sequence)
 	SCTE            *SCTE     // SCTE-35 used for Ad signaling in HLS
 	ProgramDateTime time.Time // EXT-X-PROGRAM-DATE-TIME tag associates the first sample of a media segment with an absolute date and/or time
+	DateRanges      []DateRange // EXT-X-DATERANGE tags associated with segment
 	Custom          map[string]CustomTag
+}
+
+type ClientAttributes map[string]string
+type DateRange struct {
+	ID               string // required
+	Class            string
+	StartDate        time.Time // required
+	EndDate          time.Time
+	Duration         float64
+	PlannedDuration  float64
+	SCTE35Command    string
+	SCTE35In         string
+	SCTE35Out        string
+	EndOnNext        string
+	ClientAttributes ClientAttributes
 }
 
 // SCTE holds custom, non EXT-X-DATERANGE, SCTE-35 tags
@@ -331,5 +349,6 @@ type decodingState struct {
 	xkey               *Key
 	xmap               *Map
 	scte               *SCTE
+	dateRanges         []DateRange
 	custom             map[string]CustomTag
 }

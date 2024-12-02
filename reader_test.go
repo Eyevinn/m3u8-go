@@ -1042,6 +1042,52 @@ func TestDecodeMediaPlaylistWithCueOutCueIn(t *testing.T) {
 	}
 }
 
+func TestMediaPlaylistWithAdbreaks(t *testing.T) {
+	cases := []struct {
+		playlistLocation  string
+		expectedIDs []string
+		// expectedSCTEIndex int
+		// expectedSCTECue   string
+		// expectedSCTEID    string
+		// expectedSCTETime  float64
+	}{
+		{
+			"sample-playlists/media-playlist-with-adbreaks.m3u8",
+			[]string {
+				"1125241458-1732546579",
+				"78139779-1732546579",
+				"29576926-1-1732546579",
+				"78380955-1732546609",
+				"29576927-1-1732546609",
+				"78360644-1732546639",
+				"29576928-1-1732546639",
+				"29585960-1-1732546669",
+				"29530249-1-1732546671",
+				"29530250-1-1732546705",
+				"29530471-1-1732546720",
+				"29530251-1-1732546720",
+			},
+		},
+	}
+	index := 0
+	for _, c := range cases {
+		f, _ := os.Open(c.playlistLocation)
+		playlist, _, _ := DecodeFrom(bufio.NewReader(f), true)
+		mediaPlaylist := playlist.(*MediaPlaylist)
+		for _, item := range mediaPlaylist.Segments {
+			if item == nil {
+				break
+			}
+			for _, dr := range item.DateRanges {
+				if (dr.ID != c.expectedIDs[index]) {
+					t.Error("Expected ", c.expectedIDs[index], " got ", dr.ID)
+				}
+				index++
+			}
+		}
+	}
+}
+
 /****************
  *  Benchmarks  *
  ****************/
