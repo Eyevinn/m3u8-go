@@ -79,6 +79,20 @@ const (
 	SCTE35Cue_End                        // SCTE35Cue_End indicates an in cue point
 )
 
+type DefineType uint
+
+const (
+	DefineType_Value DefineType = iota
+	DefineType_Import
+	DefineType_QueryParam
+)
+
+type Define struct {
+	Name        string
+	Type        DefineType
+	Value       *string
+}
+
 // MediaPlaylist structure represents a single bitrate playlist aka
 // media playlist. It related to both a simple media playlists and a
 // sliding window media playlists. URI lines in the Playlist point to
@@ -130,6 +144,7 @@ type MediaPlaylist struct {
 	Key              *Key // EXT-X-KEY is optional encryption key displayed before any segments (default key for the playlist)
 	Map              *Map // EXT-X-MAP is optional tag specifies how to obtain the Media Initialization Section (default map for the playlist)
 	WV               *WV  // Widevine related tags outside of M3U8 specs
+	Defines          []Define
 	Custom           map[string]CustomTag
 	customDecoders   []CustomDecoder
 }
@@ -155,6 +170,7 @@ type MasterPlaylist struct {
 	ver                 uint8
 	independentSegments bool
 	Custom              map[string]CustomTag
+	Defines             []Define
 	customDecoders      []CustomDecoder
 }
 
@@ -219,6 +235,7 @@ type MediaSegment struct {
 	DateRanges      []DateRange // EXT-X-DATERANGE tags associated with segment
 	Custom          map[string]CustomTag
 }
+
 
 type ClientAttributes map[string]string
 type DateRange struct {

@@ -64,6 +64,11 @@ func (p *MasterPlaylist) Append(uri string, chunklist *MediaPlaylist, params Var
 	p.buf.Reset()
 }
 
+func (p *MasterPlaylist) AppendDefine(d Define) error {
+	p.Defines = append(p.Defines, d)
+	return nil
+}
+
 // ResetCache resetes the playlist' cache.
 func (p *MasterPlaylist) ResetCache() {
 	p.buf.Reset()
@@ -379,6 +384,10 @@ func (p *MediaPlaylist) AppendSegment(seg *MediaSegment) error {
 	return nil
 }
 
+func (p *MediaPlaylist) AppendDefine(d Define) error {
+	p.Defines = append(p.Defines, d)
+	return nil
+}
 // Slide combines two operations: firstly it removes one chunk from
 // the head of chunk slice and move pointer to next chunk. Secondly it
 // appends one chunk to the tail of chunk slice. Useful for sliding
@@ -414,6 +423,29 @@ func (p *MediaPlaylist) Encode() *bytes.Buffer {
 				p.buf.WriteString(customBuf.String())
 				p.buf.WriteRune('\n')
 			}
+		}
+	}
+
+	if len(p.Defines) > 0 {
+		for _, d := range p.Defines {
+			p.buf.WriteString("#EXT-X-DEFINE:")
+			switch (d.Type) {
+			case DefineType_Value:
+				p.buf.WriteString("NAME=\"")
+				p.buf.WriteString(d.Name)
+				p.buf.WriteString("\",VALUE=\"")
+				p.buf.WriteString(*d.Value)
+				p.buf.WriteString("\"")
+			case DefineType_Import:
+				p.buf.WriteString("IMPORT=\"")
+				p.buf.WriteString(d.Name)
+				p.buf.WriteString("\"")
+			case DefineType_QueryParam:
+				p.buf.WriteString("QUERYPARAM=\"")
+				p.buf.WriteString(d.Name)
+				p.buf.WriteString("\"")
+			}
+				p.buf.WriteRune('\n')
 		}
 	}
 
