@@ -97,6 +97,28 @@ func (p *MasterPlaylist) Encode() *bytes.Buffer {
 			}
 		}
 	}
+	if len(p.Defines) > 0 {
+		for _, d := range p.Defines {
+			p.buf.WriteString("#EXT-X-DEFINE:")
+			switch d.Type {
+			case DefineType_Value:
+				p.buf.WriteString("NAME=\"")
+				p.buf.WriteString(d.Name)
+				p.buf.WriteString("\",VALUE=\"")
+				p.buf.WriteString(*d.Value)
+				p.buf.WriteString("\"")
+			case DefineType_Import:
+				p.buf.WriteString("IMPORT=\"")
+				p.buf.WriteString(d.Name)
+				p.buf.WriteString("\"")
+			case DefineType_QueryParam:
+				p.buf.WriteString("QUERYPARAM=\"")
+				p.buf.WriteString(d.Name)
+				p.buf.WriteString("\"")
+			}
+			p.buf.WriteRune('\n')
+		}
+	}
 
 	altsWritten := make(map[string]bool)
 
@@ -388,6 +410,7 @@ func (p *MediaPlaylist) AppendDefine(d Define) error {
 	p.Defines = append(p.Defines, d)
 	return nil
 }
+
 // Slide combines two operations: firstly it removes one chunk from
 // the head of chunk slice and move pointer to next chunk. Secondly it
 // appends one chunk to the tail of chunk slice. Useful for sliding
@@ -429,7 +452,7 @@ func (p *MediaPlaylist) Encode() *bytes.Buffer {
 	if len(p.Defines) > 0 {
 		for _, d := range p.Defines {
 			p.buf.WriteString("#EXT-X-DEFINE:")
-			switch (d.Type) {
+			switch d.Type {
 			case DefineType_Value:
 				p.buf.WriteString("NAME=\"")
 				p.buf.WriteString(d.Name)
@@ -445,7 +468,7 @@ func (p *MediaPlaylist) Encode() *bytes.Buffer {
 				p.buf.WriteString(d.Name)
 				p.buf.WriteString("\"")
 			}
-				p.buf.WriteRune('\n')
+			p.buf.WriteRune('\n')
 		}
 	}
 
@@ -748,6 +771,34 @@ func (p *MediaPlaylist) Encode() *bytes.Buffer {
 					p.buf.WriteString(dr.EndOnNext)
 				}
 
+				if dr.AssetList != "" {
+					p.buf.WriteString(",X-ASSET-LIST=\"")
+					p.buf.WriteString(dr.AssetList)
+					p.buf.WriteString("\"")
+				}
+
+				if dr.ResumeOffset != nil {
+					p.buf.WriteString(",X-RESUME-OFFSET=")
+					p.buf.WriteString(strconv.FormatFloat(*dr.ResumeOffset, 'f', 1, 32))
+				}
+
+				if dr.Restrict != "" {
+					p.buf.WriteString(",X-RESTRICT=\"")
+					p.buf.WriteString(dr.Restrict)
+					p.buf.WriteString("\"")
+				}
+
+				if dr.PlayoutLimit != 0 {
+					p.buf.WriteString(",X-PLAYOUT-LIMIT=")
+					p.buf.WriteString(strconv.FormatFloat(dr.PlayoutLimit, 'f', 1, 32))
+				}
+
+				if dr.Snap != "" {
+					p.buf.WriteString(",X-SNAP=\"")
+					p.buf.WriteString(dr.Snap)
+					p.buf.WriteString("\"")
+				}
+
 				for k, v := range dr.ClientAttributes {
 					p.buf.WriteString(",")
 					p.buf.WriteString(k)
@@ -1010,7 +1061,6 @@ func (p *MediaPlaylist) AppendDateRanges(dateRanges []DateRange) error {
 	s.DateRanges = append(s.DateRanges, dateRanges...)
 	return nil
 }
-
 
 // GetAllSegments could get all segments currently added to
 // playlist.
