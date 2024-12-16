@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 
-	"github.com/grafov/m3u8"
+	"github.com/eyevinn/m3u8"
 )
 
 // #CUSTOM-SEGMENT-TAG:<attribute-list>
