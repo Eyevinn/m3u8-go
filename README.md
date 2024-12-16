@@ -2,11 +2,7 @@
 M3U8 [![](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go#video)
 ====
 
-Project status
----------------
-
-Project support suspended and code moved to read only archive.
-https://github.com/grafov/m3u8/issues/225
+Fork of https://github.com/grafov/m3u8/, meant for further development since the source repo is archived as of december 8th 2024
 
 About
 -----
@@ -33,16 +29,16 @@ See the list of the library authors at [AUTHORS](AUTHORS) file.
 Install
 -------
 
-	go get github.com/grafov/m3u8
+	go get github.com/eyevinn/m3u8
 
-or get releases from https://github.com/grafov/m3u8/releases
+or get releases from https://github.com/eyevinn/m3u8/releases
 
-Documentation [![GoDoc](https://godoc.org/github.com/grafov/m3u8?status.svg)](https://pkg.go.dev/github.com/grafov/m3u8)
+Documentation [![GoDoc](https://godoc.org/github.com/eyevinn/m3u8?status.svg)](https://pkg.go.dev/github.com/eyevinn/m3u8)
 -------------
 
 Package online documentation (examples included) available at:
 
-* http://pkg.go.dev/github.com/grafov/m3u8
+* http://pkg.go.dev/github.com/eyevinn/m3u8
 
 Supported by the HLS protocol tags and their library support explained in [M3U8 cheatsheet](M3U8.md).
 
@@ -125,14 +121,14 @@ Also the library used in opensource software so you may look at these apps for u
 * [HLS utils](https://github.com/archsh/hls-utils)
 * [M3U8 reader](https://github.com/jeongmin/m3u8-reader)
 
-Project status [![Go Report Card](https://goreportcard.com/badge/grafov/m3u8)](https://goreportcard.com/report/grafov/m3u8)
+<!--Project status [![Go Report Card](https://goreportcard.com/badge/eyevinn/m3u8)](https://goreportcard.com/report/eyevinn/m3u8)
 --------------
 
-[![Build Status](https://travis-ci.org/grafov/m3u8.png?branch=master)](https://travis-ci.org/grafov/m3u8) [![Build Status](https://cloud.drone.io/api/badges/grafov/m3u8/status.svg)](https://cloud.drone.io/grafov/m3u8) [![Coverage Status](https://coveralls.io/repos/github/grafov/m3u8/badge.svg?branch=master)](https://coveralls.io/github/grafov/m3u8?branch=master)
+[![Build Status](https://travis-ci.org/eyevinn/m3u8.png?branch=master)](https://travis-ci.org/eyevinn/m3u8) [//][![Build Status](https://cloud.drone.io/api/badges/eyevinn/m3u8/status.svg)](https://cloud.drone.io/grafov/m3u8) [![Coverage Status](https://coveralls.io/repos/github/grafov/m3u8/badge.svg?branch=master)](https://coveralls.io/github/grafov/m3u8?branch=master)
 
 [![DeepSource](https://static.deepsource.io/deepsource-badge-light.svg)](https://deepsource.io/gh/grafov/m3u8/?ref=repository-badge)
 
-Code coverage: https://gocover.io/github.com/grafov/m3u8
+Code coverage: https://gocover.io/github.com/grafov/m3u8-->
 
 Project maintainers
 --------------------
