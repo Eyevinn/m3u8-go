@@ -954,11 +954,11 @@ func TestMediaPlaylistSetDefine(t *testing.T) {
 	}
 
 	v := "value"
-	d := Define {
-		Name: "VALUE",
-		Type: DefineType_Value,
+	d := Define{
+		Name:  "VALUE",
+		Type:  DefineType_Value,
 		Value: &v,
-	}	
+	}
 	m.AppendDefine(d)
 	if m.Defines[0].Name != d.Name {
 		t.Fatalf("Append EXT-X-DEFINE failed: %s", m.Defines[0].Name)
@@ -973,7 +973,7 @@ func TestNewMasterPlaylistSetDateRange(t *testing.T) {
 
 	tests := []struct {
 		Name            string
-		DateRanges       []DateRange
+		DateRanges      []DateRange
 		ExpectedResults []string
 		ExpectedError   string
 		Segments        []*MediaSegment
@@ -999,22 +999,22 @@ func TestNewMasterPlaylistSetDateRange(t *testing.T) {
 					EndOnNext:        "YES",
 				},
 				{
-					ID:               "id2",
-					StartDate:        now,
-					Duration:         10,
-					PlannedDuration:  5,
-					Class:            "class",
-					EndDate:          now,
+					ID:              "id2",
+					StartDate:       now,
+					Duration:        10,
+					PlannedDuration: 5,
+					Class:           "class",
+					EndDate:         now,
 					ClientAttributes: map[string]string{
 						"CUSTOM-DROP-OFFSET": "0",
-						"X-ASSET-LIST": "http://localhost:8081/interstitial?duration=%s&sessionId={$sessionId}",
-						"X-RESTRICT": "SKIP,JUMP",
-						"X-SNAP": "IN,OUT",
+						"X-ASSET-LIST":       "http://localhost:8081/interstitial?duration=%s&sessionId={$sessionId}",
+						"X-RESTRICT":         "SKIP,JUMP",
+						"X-SNAP":             "IN,OUT",
 					},
-					SCTE35In:         "test",
-					SCTE35Out:        "test",
-					SCTE35Command:    "test",
-					EndOnNext:        "YES",
+					SCTE35In:      "test",
+					SCTE35Out:     "test",
+					SCTE35Command: "test",
+					EndOnNext:     "YES",
 				},
 			},
 			Segments: segments,

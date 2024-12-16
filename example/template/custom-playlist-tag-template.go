@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/eyevinn/m3u8"
+	"github.com/Eyevinn/m3u8-go"
 )
 
 // #CUSTOM-PLAYLIST-TAG:<number>
