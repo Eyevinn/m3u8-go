@@ -1,6 +1,4 @@
 <!--*- mode:markdown -*-->
-M3U8 [![](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go#video)
-====
 
 Fork of https://github.com/grafov/m3u8/, meant for further development since the source repo is archived as of december 8th 2024
 
@@ -29,16 +27,16 @@ See the list of the library authors at [AUTHORS](AUTHORS) file.
 Install
 -------
 
-	go get github.com/eyevinn/m3u8
+	go get github.com/Eyevinn/m3u8-go
 
-or get releases from https://github.com/eyevinn/m3u8/releases
+or get releases from https://github.com/eyevinn/m3u8-go/releases
 
-Documentation [![GoDoc](https://godoc.org/github.com/eyevinn/m3u8?status.svg)](https://pkg.go.dev/github.com/eyevinn/m3u8)
+Documentation [![GoDoc](https://godoc.org/github.com/Eyevinn/m3u8-go?status.svg)](https://pkg.go.dev/github.com/Eyevinn/m3u8-)
 -------------
 
 Package online documentation (examples included) available at:
 
-* http://pkg.go.dev/github.com/eyevinn/m3u8
+* http://pkg.go.dev/github.com/Eyevinn/m3u8-go
 
 Supported by the HLS protocol tags and their library support explained in [M3U8 cheatsheet](M3U8.md).
 
